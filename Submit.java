@@ -29,7 +29,7 @@ public class Submit extends JFrame {
     /**
      * The Application Constructor that will be used to create the home GUI
      */
-    public Submit(ThesisSubmission thesisSub, UserLogin thisForm) {
+    public Submit(ThesisSubmission thesisSub, StudentPrompt thisForm) {
 
         submit = this;
         submission = thesisSub;

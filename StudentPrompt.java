@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-public class UserLogin extends JFrame {
+public class StudentPrompt extends JFrame {
     private String fname, lname, password;
     private int ID;
     private JTextField txtPassword, txtID, txtName;
@@ -20,8 +20,8 @@ public class UserLogin extends JFrame {
     private JButton cmdSubmit;
     private JPanel pnlCommand;
     private JPanel pnlDisplay;
-    private UserLogin thisForm;
-    private ArrayList<Integer> idList;
+    private StudentPrompt thisForm;
+    private ArrayList<Student> studentList;
     private ThesisSubmission submission;
 
     /**
@@ -29,11 +29,11 @@ public class UserLogin extends JFrame {
      * 
      * @param app
      */
-    public UserLogin(ThesisSubmission thesisSub) {
-        submission =thesisSub;
-        idList = loadIDs("ID.txt");
+    public StudentPrompt(ThesisSubmission thesisSub) {
+        submission = thesisSub;
+        studentList = loadStudents("Students.txt");
         thisForm = this;
-        setTitle("ID Number");
+        setTitle("Student Information");
         pnlCommand = new JPanel();
         pnlDisplay = new JPanel();
 
@@ -51,15 +51,13 @@ public class UserLogin extends JFrame {
          * pnlDisplay.add(apHeader);
          */
 
-        /*
-         * pnlDisplay.add(new JLabel("Name:"));
-         * txtName = new JTextField(36);
-         * pnlDisplay.add(txtName);
-         */
-
         pnlDisplay.add(new JLabel("Enter your ID number: "));
         txtID = new JTextField(12);
         pnlDisplay.add(txtID);
+
+        pnlDisplay.add(new JLabel("Enter your name: "));
+        txtName = new JTextField(36);
+        pnlDisplay.add(txtName);
 
         /*
          * pnlDisplay.add(new JLabel("Password:"));
@@ -120,21 +118,24 @@ public class UserLogin extends JFrame {
      * }
      */
 
-    private ArrayList<Integer> loadIDs(String idFile) {
+    private ArrayList<Student> loadStudents(String idFile) {
         Scanner scan;
-        ArrayList<Integer> idList = new ArrayList<Integer>();
+        ArrayList<Student> studentList = new ArrayList<Student>();
         try {
             scan = new Scanner(new File(idFile));
             while (scan.hasNext()) {
-                int id = Integer.parseInt(scan.nextLine());
-                System.out.println(id);
-                idList.add(id);
+                String line = scan.nextLine();
+                String fname = line.split(" ")[0];
+                String lname = line.split(" ")[1];
+                int id = Integer.parseInt(line.split(" ")[2]);
+                Student stud = new Student(fname,lname,id);
+                studentList.add(stud);
             }
-            return idList;
+            return studentList;
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
-        return idList;
+        return studentList;
     }
 
     /**
@@ -154,10 +155,10 @@ public class UserLogin extends JFrame {
      *         admitted or not based on whether it matches with any of the Admin
      *         objects in the admins list.
      */
-    public void AddIds(ArrayList<Integer> idList) {
+    public void AddStudent(ArrayList<Student> studentList) {
         try {
-            PrintStream out = new PrintStream(new FileOutputStream("ID.txt"));
-            for (Integer r : idList) {
+            PrintStream out = new PrintStream(new FileOutputStream("Students.txt"));
+            for (Student r : studentList) {
                 out.println(r);
             }
             out.close();
@@ -172,14 +173,17 @@ public class UserLogin extends JFrame {
      * they are, otherwise it shows an error message.
      */
     private class SubmitButtonListener implements ActionListener {
-            public void actionPerformed(ActionEvent actev) {
+        public void actionPerformed(ActionEvent actev) {
             try {
                 ID = Integer.parseInt(txtID.getText());
+                fname = txtName.getText().split(" ")[0];
+                lname = txtName.getText().split(" ")[1];
             } catch (NumberFormatException numformerror) {
                 System.out.println(numformerror.getMessage());
             } finally {
-                idList.add(ID);
-                AddIds(idList);
+                Student student = new Student(fname,lname,ID);
+                studentList.add(student);
+                AddStudent(studentList);
                 Submit submit = new Submit(submission, thisForm);
             }
             thisForm.setVisible(false);

@@ -151,7 +151,7 @@ public class ThesisSubmission extends JPanel {
     private class submitButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent g) {
             if (g.getSource() == cmdSubmit) {
-                UserLogin user = new UserLogin(thesisSub);
+                StudentPrompt user = new StudentPrompt(thesisSub);
             } else {
                 JOptionPane.showMessageDialog(null, "Updated", "Thesis Status", JOptionPane.DEFAULT_OPTION);
             }
