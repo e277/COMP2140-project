@@ -10,6 +10,7 @@ public class ThesisSubmission extends JPanel {
     private JPanel panelCommand;
     private JPanel panelDisplay;
     private ThesisSubmission thesisSub;
+    private JButton cmdReportMenu; // report menu button
 
     /**
      * The Application Constructor that will be used to create the home GUI
@@ -62,6 +63,8 @@ public class ThesisSubmission extends JPanel {
         cmdSubmit = new JButton("Submit");
         cmdUpdate = new JButton("Update");
 
+        cmdReportMenu = new JButton("Report Menu"); // report menu button
+
         // colour of buttons
         cmdSubmit.setBackground(Color.CYAN);
         
@@ -69,16 +72,19 @@ public class ThesisSubmission extends JPanel {
         cmdClose.setForeground(Color.WHITE);
 
         cmdUpdate.setBackground(Color.YELLOW);
+        cmdReportMenu.setBackground(Color.GREEN); // report menu button
        
 
         panelCommand.add(cmdSubmit);
         panelCommand.add(cmdUpdate);
+        panelCommand.add(cmdReportMenu); // report menu button
         panelCommand.add(cmdClose);
         panelCommand.setAlignmentX(CENTER_ALIGNMENT);
 
         cmdClose.addActionListener(new closeButtonListener());
         cmdSubmit.addActionListener(new submitButtonListener());
         cmdUpdate.addActionListener(new submitButtonListener());
+        cmdReportMenu.addActionListener(new ReportMenuButtonListener()); // report menu button
 
         add(panelDisplay, BorderLayout.CENTER);
 
@@ -157,6 +163,18 @@ public class ThesisSubmission extends JPanel {
             }
         }
 
+    }
+
+    /**
+     * The ReportMenuButtonListener class creates an instance of the ReportMenu
+     * class when the report menu button is clicked.
+     */
+    private class ReportMenuButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open the Report Menu
+            new ReportMenu();
+        }
     }
 
 }
