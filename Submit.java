@@ -29,7 +29,7 @@ public class Submit extends JFrame {
     /**
      * The Application Constructor that will be used to create the home GUI
      */
-    public Submit(ThesisSubmission thesisSub) {
+    public Submit(ThesisSubmission thesisSub, UserLogin thisForm) {
 
         submit = this;
         submission = thesisSub;
@@ -200,9 +200,6 @@ public class Submit extends JFrame {
                     txtName.setVisible(true);
                     cmdSubmit.setEnabled(true);
                 }
-
-                // JOptionPane.showMessageDialog(null, "Updated", "Thesis Status",
-                // JOptionPane.DEFAULT_OPTION);
             }
         }
 
