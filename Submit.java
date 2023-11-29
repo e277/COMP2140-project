@@ -5,14 +5,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Submit extends JFrame {
     private JFileChooser fc;
-    private File  fileSent;
+    private File fileSent;
     private JButton cmdClose;
     private JButton cmdSubmit;
     private JButton cmdUpload;
@@ -24,23 +29,25 @@ public class Submit extends JFrame {
     private JLabel upload;
     private JLabel txtName;
     private Submit submit;
-    private ThesisSubmission submission; 
+    private ThesisSubmission submission;
+    private StudentPrompt prompts;
+    private ArrayList<FileInfo> files;
 
     /**
      * The Application Constructor that will be used to create the home GUI
      */
     public Submit(ThesisSubmission thesisSub, StudentPrompt thisForm) {
-
         submit = this;
         submission = thesisSub;
+        prompts = thisForm;
+        files = loadFileInfo("FileInfo.txt");
         fc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
         panelCommand = new JPanel();
         panelUpload = new JPanel();
         panelDisplay = new JPanel();
         panelSubDisplay = new JPanel();
-        panelSubDisplay.setLayout(new GridLayout(2,2));
-        
+        panelSubDisplay.setLayout(new GridLayout(2, 2));
 
         setBackground(Color.WHITE);
 
@@ -67,7 +74,7 @@ public class Submit extends JFrame {
         hBox.add(Box.createHorizontalGlue());
         hBox.setBackground(Color.RED);
         hBox.setOpaque(true);
-    
+
         subHeader = new JLabel("SUBMISSION PORTAL", SwingConstants.CENTER);
         subHeader.setFont(new Font("Georgia", Font.BOLD, 46));
         subHeader.setAlignmentX(CENTER_ALIGNMENT);
@@ -77,7 +84,6 @@ public class Submit extends JFrame {
         ImageIcon scaledSubmit = new ImageIcon(submitImage);
         JLabel submitImg = new JLabel(scaledSubmit, SwingConstants.CENTER);
         submitImg.setAlignmentX(CENTER_ALIGNMENT);
-       
 
         upload = new JLabel("Please upload your thesis using the button below:", SwingConstants.CENTER);
         upload.setFont(new Font("Georgia", Font.PLAIN, 18));
@@ -112,7 +118,7 @@ public class Submit extends JFrame {
         cmdClose.addActionListener(new closeButtonListener());
         cmdSubmit.addActionListener(new submitButtonListener());
         cmdUpload.addActionListener(new submitButtonListener());
-        
+
         panelUpload.add(txtName);
         panelUpload.add(cmdUpload);
 
@@ -127,10 +133,9 @@ public class Submit extends JFrame {
         panelSubDisplay.add(upload);
         panelSubDisplay.add(panelUpload);
 
-
-        panelDisplay.add(hBox,BorderLayout.NORTH);
-        panelDisplay.add(vBox,BorderLayout.CENTER);
-        panelDisplay.add(panelSubDisplay,BorderLayout.SOUTH);
+        panelDisplay.add(hBox, BorderLayout.NORTH);
+        panelDisplay.add(vBox, BorderLayout.CENTER);
+        panelDisplay.add(panelSubDisplay, BorderLayout.SOUTH);
 
         add(panelDisplay, BorderLayout.CENTER);
         add(panelCommand, BorderLayout.SOUTH);
@@ -142,12 +147,11 @@ public class Submit extends JFrame {
         int height = 700;
         setBounds(center.x - width / 2, center.y - height / 2, width, height);
 
-
         pack();
         setVisible(true);
     }
 
-       /**
+    /**
      * The closeButtonListener class is an ActionListener that exits the program
      * when the close button
      * is clicked.
@@ -157,6 +161,47 @@ public class Submit extends JFrame {
             setVisible(false);
             submission.setVisible(true);
         }
+    }
+
+    public void AddFileInfo(ArrayList<FileInfo> fileList) {
+        try {
+            PrintStream out = new PrintStream(new FileOutputStream("FileInfo.txt"));
+            for (FileInfo r : fileList) {
+                out.println(r);
+            }
+            out.close();
+        } catch (FileNotFoundException fe) {
+            System.out.print(fe.getMessage());
+        }
+    }
+
+    private ArrayList<FileInfo> loadFileInfo(String idFile) {
+        Scanner scan;
+        ArrayList<FileInfo> files = new ArrayList<FileInfo>();
+        try {
+            scan = new Scanner(new File(idFile));
+            while (scan.hasNext()) {
+                String line = scan.nextLine();
+                int id = Integer.parseInt(line.split(" ")[0]);
+                Path path = new File(line.split(" ")[1]).toPath();
+
+                FileInfo fInfo = new FileInfo(id, path);
+                files.add(fInfo);
+            }
+            return files;
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        return files;
+    }
+
+    public boolean fileExists(FileInfo file, ArrayList<FileInfo> files) {
+        for (FileInfo fl : files) {
+            if (fl == file) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -181,6 +226,12 @@ public class Submit extends JFrame {
 
                     try {
                         Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                        FileInfo info = new FileInfo(prompts.getID(), destination);
+                        boolean newFile = fileExists(info, files);
+                        if (newFile == true) {
+                            files.add(info);
+                            AddFileInfo(files);
+                        }
                         JOptionPane.showMessageDialog(null, "Your Thesis has been submitted", "Submitted",
                                 JOptionPane.DEFAULT_OPTION);
                         txtName.setText("");

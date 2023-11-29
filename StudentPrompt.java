@@ -117,6 +117,9 @@ public class StudentPrompt extends JFrame {
      * return admns;
      * }
      */
+    public int getID() {
+        return ID;
+    }
 
     private ArrayList<Student> loadStudents(String idFile) {
         Scanner scan;
@@ -128,7 +131,7 @@ public class StudentPrompt extends JFrame {
                 String fname = line.split(" ")[0];
                 String lname = line.split(" ")[1];
                 int id = Integer.parseInt(line.split(" ")[2]);
-                Student stud = new Student(fname,lname,id);
+                Student stud = new Student(fname, lname, id);
                 studentList.add(stud);
             }
             return studentList;
@@ -156,6 +159,8 @@ public class StudentPrompt extends JFrame {
      *         objects in the admins list.
      */
     public void AddStudent(ArrayList<Student> studentList) {
+        ArrayList<Student> students = new ArrayList<Student>();
+        students = loadStudents("Students.txt");
         try {
             PrintStream out = new PrintStream(new FileOutputStream("Students.txt"));
             for (Student r : studentList) {
@@ -165,6 +170,15 @@ public class StudentPrompt extends JFrame {
         } catch (FileNotFoundException fe) {
             System.out.print(fe.getMessage());
         }
+    }
+
+    public boolean alreadyStudent(Student student, ArrayList<Student> students) {
+        for (Student stud : students) {
+            if (stud == student) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -180,10 +194,15 @@ public class StudentPrompt extends JFrame {
                 lname = txtName.getText().split(" ")[1];
             } catch (NumberFormatException numformerror) {
                 System.out.println(numformerror.getMessage());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             } finally {
-                Student student = new Student(fname,lname,ID);
-                studentList.add(student);
-                AddStudent(studentList);
+                Student student = new Student(fname, lname, ID);
+                boolean isStudent = alreadyStudent(student, studentList);
+                if (isStudent) {
+                    studentList.add(student);
+                    AddStudent(studentList);
+                }
                 Submit submit = new Submit(submission, thisForm);
             }
             thisForm.setVisible(false);
