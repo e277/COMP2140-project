@@ -184,7 +184,6 @@ public class Submit extends JFrame {
                 String line = scan.nextLine();
                 int id = Integer.parseInt(line.split(" ")[0]);
                 Path path = new File(line.split(" ")[1]).toPath();
-
                 FileInfo fInfo = new FileInfo(id, path);
                 files.add(fInfo);
             }
@@ -197,8 +196,10 @@ public class Submit extends JFrame {
 
     public boolean fileExists(FileInfo file, ArrayList<FileInfo> files) {
         for (FileInfo fl : files) {
-            if (fl == file) {
-                return true;
+            if (fl.getID() == file.getID()) {
+                if (fl.getPath().equals(file.getPath())) {
+                    return true;
+                }
             }
         }
         return false;
@@ -227,8 +228,8 @@ public class Submit extends JFrame {
                     try {
                         Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
                         FileInfo info = new FileInfo(prompts.getID(), destination);
-                        boolean newFile = fileExists(info, files);
-                        if (newFile == true) {
+                        boolean oldFile = fileExists(info, files);
+                        if (!oldFile) {
                             files.add(info);
                             AddFileInfo(files);
                         }

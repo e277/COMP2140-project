@@ -1,7 +1,4 @@
-
 import javax.swing.*;
-import javax.swing.text.Style;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,9 +10,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 public class StudentPrompt extends JFrame {
-    private String fname, lname, password;
+    private String fname, lname;
     private int ID;
-    private JTextField txtPassword, txtID, txtName;
+    private JTextField txtID, txtName;
     private JButton cmdCancel;
     private JButton cmdSubmit;
     private JPanel pnlCommand;
@@ -159,8 +156,6 @@ public class StudentPrompt extends JFrame {
      *         objects in the admins list.
      */
     public void AddStudent(ArrayList<Student> studentList) {
-        ArrayList<Student> students = new ArrayList<Student>();
-        students = loadStudents("Students.txt");
         try {
             PrintStream out = new PrintStream(new FileOutputStream("Students.txt"));
             for (Student r : studentList) {
@@ -174,17 +169,21 @@ public class StudentPrompt extends JFrame {
 
     public boolean alreadyStudent(Student student, ArrayList<Student> students) {
         for (Student stud : students) {
-            if (stud == student) {
-                return true;
+            if (stud.getFName().equals(student.getFName())) {
+                if (stud.getLName().equals(student.getLName())) {
+                    if (stud.getID() == student.getID()) {
+                        return true;
+                    }
+                }
+
             }
         }
         return false;
     }
 
     /**
-     * The SubmitButtonListener class checks if an admin is admitted and displays a
-     * ResidentListing if
-     * they are, otherwise it shows an error message.
+     * The SubmitButtonListener class creates an instance of a student and send it to be added to the text file
+     * 
      */
     private class SubmitButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent actev) {
@@ -198,8 +197,8 @@ public class StudentPrompt extends JFrame {
                 System.out.println(e.getMessage());
             } finally {
                 Student student = new Student(fname, lname, ID);
-                boolean isStudent = alreadyStudent(student, studentList);
-                if (isStudent) {
+                boolean oldStudent = alreadyStudent(student, studentList);
+                if (!oldStudent) {
                     studentList.add(student);
                     AddStudent(studentList);
                 }
