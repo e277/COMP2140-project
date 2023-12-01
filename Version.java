@@ -71,10 +71,12 @@ public class Version{
             // Generate the version name
             LocalDateTime timeUploaded = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd-HH-mm-ss");
-            versionName = getFileName() + "_v" + counter + "_" + timeUploaded.format(formatter) + getFileExtension();
+            
+            versionName = getFileName() + "_v" + counter + "_" + getFileExtension();
+            System.out.println("l: " +versionName);
 
             File submissionsFolder = new File("Submissions");
-            System.out.println("Submissions folder exists: " + submissionsFolder.exists());
+            //System.out.println("Submissions folder exists: " + submissionsFolder.exists());
 
             // Print the contents of the "Submissions" folder
             File[] submissionFiles = submissionsFolder.listFiles();
@@ -83,21 +85,46 @@ public class Version{
                 System.out.println(file.getName());
             }
 
+            
+            Path sourcePath = new File("Submissions/" + getFileName() + getFileExtension()).toPath();
+            if (!Files.exists(sourcePath)) {
+                System.out.println("Original files not found: " + filePath.toString());
+                return;
+            }
+            Path sourcPath = Paths.get("Submissions", versionName);
+            String sourceName = sourcePath.toString();
+            //System.out.println("source:" + "\t" + sourceName + "\n");
+            String sName = sourcPath.toString();
+            //System.out.println("destination:" + "\t" +sName + "\n");
+            File old = new File("Submissions\\" + getFileName() + getFileExtension());
+             if (!Files.exists(old.toPath())) {
+                System.out.println("Original files not found: " + filePath.toString());
+                return;
+            }
+            System.out.println("old:" + "\t" + old + "\n");
+            File newf = new File("Submissions\\"+ versionName);
+            System.out.println("new:" + "\t" + newf + "\t" + versionName + "\n");
 
-            Path sourcePath = Paths.get("Submissions", getFileName() + getFileExtension());
+           boolean h = old.renameTo(newf);
+            //sourcePath = old.toPath();
+            if (h){
+                sourcePath = newf.toPath();
+            System.out.println("sourcename: " + old + "\n" + "newname:" + newf + "\n" + "newpath:" + sourcePath);}
+            
 
             // Create a new folder for versions if it doesn't exist
             File VersionsFolder= new File("VersionsFolder");
             Path versionFilePath= new File(VersionsFolder,versionName).toPath();
+            
 
-
-            System.out.println("SourceFile: " + sourcePath);
+            System.out.println("SourceFile: " + versionName);
             System.out.println("FileExtension: " + getFileExtension());
             System.out.println("SourcePath: " + sourcePath);
             System.out.println("VersionFilePath: " + versionFilePath);
 
-
+            System.out.println(sourcePath + "\t" + versionFilePath);
             Files.copy(sourcePath, versionFilePath,StandardCopyOption.REPLACE_EXISTING);
+            
 
 
         } catch (IOException e) {
@@ -128,7 +155,7 @@ public class Version{
     public static void main(String[] args) {
         
         Path path = Paths.get("Submissions\\ar.c");
-        System.out.println(path);
+        //System.out.println(path);
         Version document = new Version(123456789, path);
 
         document.addVersion();
