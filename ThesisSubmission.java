@@ -6,9 +6,7 @@ import java.awt.event.ActionListener;
 public class ThesisSubmission extends JPanel {
     private JButton cmdClose;
     private JButton cmdSubmit;
-    private JButton cmdUpdate;
     private JPanel panelCommand;
-    private JButton cmdQuotaInfo;
     private JPanel panelDisplay;
     private ThesisSubmission thesisSub;
     private JButton cmdReportMenu; // report menu button
@@ -62,8 +60,7 @@ public class ThesisSubmission extends JPanel {
         // command buttons
         cmdClose = new JButton("Close");
         cmdSubmit = new JButton("Submit");
-        cmdQuotaInfo = new JButton("Quota Information");
-        cmdUpdate = new JButton("Update");
+       
 
         cmdReportMenu = new JButton("Report Menu"); // report menu button
 
@@ -73,22 +70,18 @@ public class ThesisSubmission extends JPanel {
         cmdClose.setBackground(Color.RED);
         cmdClose.setForeground(Color.WHITE);
 
-        cmdUpdate.setBackground(Color.YELLOW);
         cmdReportMenu.setBackground(Color.GREEN); // report menu button
-        cmdQuotaInfo.setBackground(Color.ORANGE);
+        
 
         panelCommand.add(cmdSubmit);
-        panelCommand.add(cmdUpdate);
-        panelCommand.add(cmdReportMenu);
-        panelCommand.add(cmdQuotaInfo); // report menu button
+        panelCommand.add(cmdReportMenu); // report menu button
         panelCommand.add(cmdClose);
         panelCommand.setAlignmentX(CENTER_ALIGNMENT);
 
         cmdClose.addActionListener(new closeButtonListener());
         cmdSubmit.addActionListener(new submitButtonListener());
-        cmdUpdate.addActionListener(new submitButtonListener());
         cmdReportMenu.addActionListener(new ReportMenuButtonListener()); // report menu button
-        cmdQuotaInfo.addActionListener(new QuotaInfoButtonListener()); // Add listener for Quota Information button
+       
 
 
         add(panelDisplay, BorderLayout.CENTER);
@@ -161,11 +154,7 @@ public class ThesisSubmission extends JPanel {
      */
     private class submitButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent g) {
-            if (g.getSource() == cmdSubmit) {
                 StudentPrompt user = new StudentPrompt(thesisSub);
-            } else {
-                JOptionPane.showMessageDialog(null, "Updated", "Thesis Status", JOptionPane.DEFAULT_OPTION);
-            }
         }
 
     }
@@ -182,11 +171,5 @@ public class ThesisSubmission extends JPanel {
         }
     }
 
-    private class QuotaInfoButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            new SubmissionQuota();
-        }
-    }
-
+ 
 }

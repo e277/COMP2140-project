@@ -21,6 +21,7 @@ public class Submit extends JFrame {
     private JButton cmdClose;
     private JButton cmdSubmit;
     private JButton cmdUpload;
+    private JButton cmdQuotaInfo;
     private JPanel panelCommand;
     private JPanel panelUpload;
     private JPanel panelDisplay;
@@ -32,6 +33,7 @@ public class Submit extends JFrame {
     private ThesisSubmission submission;
     private StudentPrompt prompts;
     private ArrayList<FileInfo> files;
+    private ArrayList<FileInfo> submittedFiles;
 
     /**
      * The Application Constructor that will be used to create the home GUI
@@ -40,6 +42,7 @@ public class Submit extends JFrame {
         submit = this;
         submission = thesisSub;
         prompts = thisForm;
+        submittedFiles = loadFileInfo("FileInfo.txt");
         files = loadFileInfo("FileInfo.txt");
         fc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
@@ -100,6 +103,7 @@ public class Submit extends JFrame {
         cmdClose = new JButton("Close Portal");
         cmdSubmit = new JButton("Submit Thesis");
         cmdUpload = new JButton("Upload File");
+        cmdQuotaInfo = new JButton("Quota Information");
 
         cmdSubmit.setEnabled(false);
 
@@ -110,14 +114,17 @@ public class Submit extends JFrame {
         cmdClose.setForeground(Color.WHITE);
 
         cmdUpload.setBackground(Color.YELLOW);
+        cmdQuotaInfo.setBackground(Color.ORANGE);
 
         panelCommand.add(cmdSubmit);
+        panelCommand.add(cmdQuotaInfo);
         panelCommand.add(cmdClose);
         panelCommand.setAlignmentX(CENTER_ALIGNMENT);
 
         cmdClose.addActionListener(new closeButtonListener());
         cmdSubmit.addActionListener(new submitButtonListener());
         cmdUpload.addActionListener(new submitButtonListener());
+        cmdQuotaInfo.addActionListener(new QuotaInfoButtonListener()); // Add listener for Quota Information button
 
         panelUpload.add(txtName);
         panelUpload.add(cmdUpload);
@@ -215,6 +222,47 @@ public class Submit extends JFrame {
         }
     }
 
+    private void Quota() {
+        String idString = String.valueOf(prompts.getID());
+
+        try {
+            int id = Integer.parseInt(idString);
+
+            // Logic to check submission quota for the given ID
+            int remainingSubmissions = 5 - getSubmissionsForID(id);
+            if (remainingSubmissions > 0) {
+                JOptionPane.showMessageDialog(null, "You have " + remainingSubmissions +
+                        " submissions remaining out of " + 5);
+            } else {
+                JOptionPane.showMessageDialog(null, "You have reached your submission quota.");
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "Invalid ID. Please enter a valid number.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            cmdUpload.setEnabled(false);
+            cmdSubmit.setEnabled(false);
+            submit.setVisible(false);
+        }
+    }
+
+    private int getSubmissionsForID(int id) {
+        // Count the number of submissions made for the given ID
+        int count = 0;
+        for (FileInfo fileInfo : submittedFiles) {
+            if (fileInfo.getID() == id) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private class QuotaInfoButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            new SubmissionQuota(prompts);
+        }
+    }
+
     /**
      * The submitButtonListener class creates an instance of either the Submit or
      * Update class based on
@@ -245,6 +293,7 @@ public class Submit extends JFrame {
                         }
                         JOptionPane.showMessageDialog(null, "Your Thesis has been submitted", "Submitted",
                                 JOptionPane.DEFAULT_OPTION);
+                        Quota();
                         txtName.setText("");
                         txtName.setVisible(false);
                         cmdSubmit.setEnabled(false);
@@ -259,16 +308,16 @@ public class Submit extends JFrame {
                 if (n == JFileChooser.APPROVE_OPTION) {
                     fileSent = new File(fc.getSelectedFile().getAbsolutePath());
                     String ext = getFileExtension(fileSent);
-                    if (ext.equals(".doc") || ext.equals(".docx") || ext.equals(".pdf")){
-                            txtName.setText(fc.getSelectedFile().getName());
-                            txtName.setVisible(true);
-                            cmdSubmit.setEnabled(true);
-                    }else{
-                        JOptionPane.showMessageDialog(null, "Only file types of .doc, .docx, or .pdf are supported", "Error",
+                    if (ext.equals(".doc") || ext.equals(".docx") || ext.equals(".pdf")) {
+                        txtName.setText(fc.getSelectedFile().getName());
+                        txtName.setVisible(true);
+                        cmdSubmit.setEnabled(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Only file types of .doc, .docx, or .pdf are supported",
+                                "Error",
                                 JOptionPane.ERROR_MESSAGE);
                     }
-                            
-                            
+
                 }
             }
         }
