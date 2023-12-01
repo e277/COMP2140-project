@@ -8,6 +8,7 @@ public class ThesisSubmission extends JPanel {
     private JButton cmdSubmit;
     private JButton cmdUpdate;
     private JPanel panelCommand;
+    private JButton cmdQuotaInfo;
     private JPanel panelDisplay;
     private ThesisSubmission thesisSub;
     private JButton cmdReportMenu; // report menu button
@@ -61,6 +62,7 @@ public class ThesisSubmission extends JPanel {
         // command buttons
         cmdClose = new JButton("Close");
         cmdSubmit = new JButton("Submit");
+        cmdQuotaInfo = new JButton("Quota Information");
         cmdUpdate = new JButton("Update");
 
         cmdReportMenu = new JButton("Report Menu"); // report menu button
@@ -73,11 +75,12 @@ public class ThesisSubmission extends JPanel {
 
         cmdUpdate.setBackground(Color.YELLOW);
         cmdReportMenu.setBackground(Color.GREEN); // report menu button
-       
+        cmdQuotaInfo.setBackground(Color.ORANGE);
 
         panelCommand.add(cmdSubmit);
         panelCommand.add(cmdUpdate);
-        panelCommand.add(cmdReportMenu); // report menu button
+        panelCommand.add(cmdReportMenu);
+        panelCommand.add(cmdQuotaInfo); // report menu button
         panelCommand.add(cmdClose);
         panelCommand.setAlignmentX(CENTER_ALIGNMENT);
 
@@ -85,6 +88,8 @@ public class ThesisSubmission extends JPanel {
         cmdSubmit.addActionListener(new submitButtonListener());
         cmdUpdate.addActionListener(new submitButtonListener());
         cmdReportMenu.addActionListener(new ReportMenuButtonListener()); // report menu button
+        cmdQuotaInfo.addActionListener(new QuotaInfoButtonListener()); // Add listener for Quota Information button
+
 
         add(panelDisplay, BorderLayout.CENTER);
 
@@ -174,6 +179,13 @@ public class ThesisSubmission extends JPanel {
         public void actionPerformed(ActionEvent e) {
             // Open the Report Menu
             new ReportMenu(null, null);
+        }
+    }
+
+    private class QuotaInfoButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            new SubmissionQuota();
         }
     }
 
