@@ -205,6 +205,16 @@ public class Submit extends JFrame {
         return false;
     }
 
+    private String getFileExtension(File fl) {
+        String fileNameWithExtension = fileSent.toString();
+        int lastDotIndex = fileNameWithExtension.lastIndexOf('.');
+        if (lastDotIndex != -1) {
+            return fileNameWithExtension.substring(lastDotIndex);
+        } else {
+            return "";
+        }
+    }
+
     /**
      * The submitButtonListener class creates an instance of either the Submit or
      * Update class based on
@@ -248,9 +258,17 @@ public class Submit extends JFrame {
                 int n = fc.showOpenDialog(null);
                 if (n == JFileChooser.APPROVE_OPTION) {
                     fileSent = new File(fc.getSelectedFile().getAbsolutePath());
-                    txtName.setText(fc.getSelectedFile().getName());
-                    txtName.setVisible(true);
-                    cmdSubmit.setEnabled(true);
+                    String ext = getFileExtension(fileSent);
+                    if (ext.equals(".doc") || ext.equals(".docx") || ext.equals(".pdf")){
+                            txtName.setText(fc.getSelectedFile().getName());
+                            txtName.setVisible(true);
+                            cmdSubmit.setEnabled(true);
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Only file types of .doc, .docx, or .pdf are supported", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                            
+                            
                 }
             }
         }
