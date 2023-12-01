@@ -175,6 +175,7 @@ public class Submit extends JFrame {
             PrintStream out = new PrintStream(new FileOutputStream("FileInfo.txt"));
             for (FileInfo r : fileList) {
                 out.println(r);
+
             }
             out.close();
         } catch (FileNotFoundException fe) {
@@ -290,7 +291,10 @@ public class Submit extends JFrame {
                         if (!oldFile) {
                             files.add(info);
                             AddFileInfo(files);
+
+                           
                         }
+                        
                         JOptionPane.showMessageDialog(null, "Your Thesis has been submitted", "Submitted",
                                 JOptionPane.DEFAULT_OPTION);
                         Quota();
@@ -298,6 +302,11 @@ public class Submit extends JFrame {
                         txtName.setVisible(false);
                         cmdSubmit.setEnabled(false);
                         submit.setVisible(false);
+
+                        Version version = new Version(prompts.getID(), destination);
+                        // Add the version
+                        version.addVersion();
+    
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error",
                                 JOptionPane.ERROR_MESSAGE);
