@@ -1,0 +1,10 @@
+{
+    "java.dependency.packagePresentation": "hierarchical",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "javax.mail.jar",
+        "mailapi-1.6.2.jar",
+        "smtp-1.6.2.jar",
+        "activation.jar"
+    ]
+}
