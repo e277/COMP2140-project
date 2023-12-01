@@ -45,10 +45,18 @@ public class Student {
         return ID;
     }
 
+    
+    /** 
+     * @return String
+     */
     public String getEmail(){
         return email;
     }
 
+    
+    /** 
+     * @return String
+     */
     public String toString(){
         return getFName() + " " + getLName() + " " + getID() + " " + getEmail();
     }

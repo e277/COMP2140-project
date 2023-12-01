@@ -104,6 +104,11 @@ public class SubmissionQuota extends JFrame {
         }
     }
 
+    
+    /** 
+     * @param idFile
+     * @return ArrayList<FileInfo>
+     */
     private ArrayList<FileInfo> loadFileInfo(String idFile) {
         ArrayList<FileInfo> files = new ArrayList<>();
         try {
@@ -122,6 +127,11 @@ public class SubmissionQuota extends JFrame {
         return files;
     }
 
+    
+    /** 
+     * @param id
+     * @return int
+     */
     private int getSubmissionsForID(int id) {
         // Count the number of submissions made for the given ID
         int count = 0;

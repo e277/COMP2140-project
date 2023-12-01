@@ -111,6 +111,7 @@ public class Submit extends JFrame {
         cmdQuotaInfo = new JButton("Quota Information");
 
         cmdSubmit.setEnabled(false);
+        cmdUpdate.setEnabled(true);
 
         // colour of buttons
         cmdSubmit.setBackground(Color.CYAN);
@@ -182,6 +183,10 @@ public class Submit extends JFrame {
         }
     }
 
+    
+    /** 
+     * @param fileList
+     */
     public void AddFileInfo(ArrayList<FileInfo> fileList) {
         try {
             PrintStream out = new PrintStream(new FileOutputStream("FileInfo.txt"));
@@ -195,6 +200,11 @@ public class Submit extends JFrame {
         }
     }
 
+    
+    /** 
+     * @param idFile
+     * @return ArrayList<FileInfo>
+     */
     private ArrayList<FileInfo> loadFileInfo(String idFile) {
         Scanner scan;
         ArrayList<FileInfo> files = new ArrayList<FileInfo>();
@@ -214,6 +224,12 @@ public class Submit extends JFrame {
         return files;
     }
 
+    
+    /** 
+     * @param file
+     * @param files
+     * @return boolean
+     */
     public boolean fileExists(FileInfo file, ArrayList<FileInfo> files) {
         for (FileInfo fl : files) {
             if (fl.getID() == file.getID()) {
@@ -248,6 +264,7 @@ public class Submit extends JFrame {
                         " submissions remaining out of " + 5);
             } else {
                 JOptionPane.showMessageDialog(null, "You have reached your submission quota.");
+                cmdUpdate.setEnabled(false);
             }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(null, "Invalid ID. Please enter a valid number.", "Error",
@@ -353,7 +370,7 @@ public class Submit extends JFrame {
                 txtName.setText("");
                 txtName.setVisible(false);
                 cmdSubmit.setEnabled(false);
-                submit.setVisible(false);
+                
             } else {
                 int n = fc.showOpenDialog(null);
                 if (n == JFileChooser.APPROVE_OPTION) {

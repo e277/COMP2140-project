@@ -9,14 +9,26 @@ public class FileInfo {
         this.path = path;
     }
 
+    
+    /** 
+     * @return int
+     */
     public int getID() {
         return ID;
     }
 
+    
+    /** 
+     * @return Path
+     */
     public Path getPath() {
         return path;
     }
 
+    
+    /** 
+     * @param path
+     */
     public void setPath(Path path) {
         this.path = path;
     }

@@ -28,10 +28,18 @@ public class Version {
         files = loadFileInfo("FileInfo.txt");
     }
 
+    
+    /** 
+     * @return int
+     */
     private int getUploaderId() {
         return uploaderId;
     }
 
+    
+    /** 
+     * @return String
+     */
     private String getFileName() {
 
         String fileNameWithExtension = filePath.getFileName().toString();
@@ -44,6 +52,10 @@ public class Version {
         return fileName;
     }
 
+    
+    /** 
+     * @return String
+     */
     private String getFileExtension() {
         String fileNameWithExtension = filePath.getFileName().toString();
         int lastDotIndex = fileNameWithExtension.lastIndexOf('.');
@@ -54,7 +66,7 @@ public class Version {
         }
     }
 
-    void addVersion() {
+   public void addVersion() {
 
         String versionName = "";
 
@@ -104,7 +116,7 @@ public class Version {
         }
     }
 
-    void updateVersion() {
+    public void updateVersion() {
         try {
             String name = getFileName().split("_")[1];
             int num = Integer.parseInt(name.substring(1));
@@ -136,6 +148,10 @@ public class Version {
         }
     }
 
+    
+    /** 
+     * @param fileList
+     */
     public void AddFileInfo(ArrayList<FileInfo> fileList) {
         try {
             PrintStream out = new PrintStream(new FileOutputStream("FileInfo.txt"));

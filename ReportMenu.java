@@ -3,6 +3,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -58,7 +59,6 @@ public class ReportMenu extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Logic to generate the report
-            // JOptionPane.showMessageDialog(null, "Report generats successfully");
             loadAndDisplayData();
         }
     }
@@ -94,6 +94,12 @@ public class ReportMenu extends JFrame {
         }
     }    
  
+    
+    /** 
+     * @param fileName
+     * @param tableModel
+     * @throws IOException
+     */
     private void loadFileData(String fileName, DefaultTableModel tableModel) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             // Clear existing columns if any
@@ -101,6 +107,8 @@ public class ReportMenu extends JFrame {
             String line = reader.readLine();
             while (line != null) {
                 String[] data = line.split("\\s+");
+                String file = new File(data[1]).getName();
+                data[1] = file;
                 tableModel.addRow(data);
                 line = reader.readLine();
             }

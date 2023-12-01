@@ -116,14 +116,26 @@ public class StudentPrompt extends JFrame {
         return ID;
     }
 
+    
+    /** 
+     * @return String
+     */
     public String getFName() {
         return fname;
     }
 
+    
+    /** 
+     * @return String
+     */
     public String getLName() {
         return lname;
     }
 
+    
+    /** 
+     * @return String
+     */
     public String getEmail() {
         return email;
     }
