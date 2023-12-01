@@ -236,6 +236,7 @@ public class Submit extends JFrame {
 
                            
                         }
+                        
                         JOptionPane.showMessageDialog(null, "Your Thesis has been submitted", "Submitted",
                                 JOptionPane.DEFAULT_OPTION);
                         txtName.setText("");

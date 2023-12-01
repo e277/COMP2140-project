@@ -130,28 +130,6 @@ public class Version{
 
 
 
-    // public void getVersion(int uploaderId){
-    //     System.out.println("Versions for Uploader ID: " + uploaderId);
-    //     for (String docVersion : versions) {
-    //         // Check if the version belongs to the specified uploader
-    //         if (docVersion.contains("_v" + uploaderId + "_")) {
-    //             System.out.println(docVersion);
-    //         }
-    //     }
-    // }
-
-
-
-
-    // public static void main(String[] args) {
-        
-    //     Path path = Paths.get("Submissions\\ascii2magnitude.c");
-    //     //System.out.println(path);
-    //     Version document = new Version(111222333, path);
-
-    //     document.addVersion();
-    //     //document.getVersion(111222333);
-
-    // }
+    
 
 }

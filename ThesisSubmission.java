@@ -130,8 +130,8 @@ public class ThesisSubmission extends JPanel {
      * the event dispatch
      * thread.
      */
-    public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    public static void main(String[] args) {    
+            javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 showForm();
             }
@@ -142,6 +142,7 @@ public class ThesisSubmission extends JPanel {
      * The closeButtonListener class is an ActionListener that exits the program
      * when the close button
      * is clicked.
+     * 
      */
     private class closeButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
