@@ -2,18 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-
+import java.nio.file.Path;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
-import java.nio.file.Path;
-
-
 
 public class SubmissionQuota extends JFrame {
     private int submissionQuota = 5; // Assign a fixed submission quota for each student
-    private int submissionsMade = 0;
     private ArrayList<FileInfo> submittedFiles; // To store the names of submitted files
 
     public SubmissionQuota() {
@@ -47,12 +43,25 @@ public class SubmissionQuota extends JFrame {
     private class CheckQuotaListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Logic to check submission quota
-            if (submissionsMade < submissionQuota) {
-                JOptionPane.showMessageDialog(null, "You have " + (submissionQuota - submissionsMade) +
-                        " submissions remaining out of " + submissionQuota);
-            } else {
-                JOptionPane.showMessageDialog(null, "You have reached your submission quota.");
+            // Prompt user for ID number
+            String idString = JOptionPane.showInputDialog("Enter your ID number:");
+            if (idString == null) { // If the user clicks cancel or closes the dialog
+                return;
+            }
+
+            try {
+                int id = Integer.parseInt(idString);
+
+                // Logic to check submission quota for the given ID
+                int remainingSubmissions = submissionQuota - getSubmissionsForID(id);
+                if (remainingSubmissions > 0) {
+                    JOptionPane.showMessageDialog(null, "You have " + remainingSubmissions +
+                            " submissions remaining out of " + submissionQuota);
+                } else {
+                    JOptionPane.showMessageDialog(null, "You have reached your submission quota.");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid ID. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -60,11 +69,26 @@ public class SubmissionQuota extends JFrame {
     private class ViewFilesListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            StringBuilder filesInfo = new StringBuilder("Submitted Files:\n");
-            for (FileInfo fileInfo : submittedFiles) {
-                filesInfo.append(fileInfo.getPath().getFileName()).append("\n");
+            // Prompt user for ID number
+            String idString = JOptionPane.showInputDialog("Enter your ID number:");
+            if (idString == null) { // If the user clicks cancel or closes the dialog
+                return;
             }
-            JOptionPane.showMessageDialog(null, filesInfo.toString(), "Submitted Files", JOptionPane.INFORMATION_MESSAGE);
+
+            try {
+                int id = Integer.parseInt(idString);
+
+                // Logic to view submitted files for the given ID
+                StringBuilder filesInfo = new StringBuilder("Submitted Files:\n");
+                for (FileInfo fileInfo : submittedFiles) {
+                    if (fileInfo.getID() == id) {
+                        filesInfo.append(fileInfo.getPath().getFileName()).append("\n");
+                    }
+                }
+                JOptionPane.showMessageDialog(null, filesInfo.toString(), "Submitted Files", JOptionPane.INFORMATION_MESSAGE);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid ID. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -91,6 +115,17 @@ public class SubmissionQuota extends JFrame {
             System.out.println(e.getMessage());
         }
         return files;
+    }
+
+    private int getSubmissionsForID(int id) {
+        // Count the number of submissions made for the given ID
+        int count = 0;
+        for (FileInfo fileInfo : submittedFiles) {
+            if (fileInfo.getID() == id) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public static void main(String[] args) {
