@@ -1,16 +1,31 @@
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
+import javax.mail.Session;
+import javax.mail.internet.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import java.util.Properties;
+import javax.mail.Authenticator;
 
 public class SendEmail {
+    private StudentPrompt prompts;
 
-    public static void main(String[] args) {
+    public SendEmail(StudentPrompt prompt) {
+        this.prompts = prompt;
+        sendEmail();
+    }
+
+    public void sendEmail() {
         // Sender's email address
         String from = "mkeshawn10@gmail.com";
 
         // Recipient's email address
-        String to = "mkeshawn50@gmail.com";
+        String[] to = { "tamaricashaw13@gmail.com", "bw6751430@gmail.com", "ezramuir12@gmail.com",
+                "mkeshawn107@gmail.com", "britneyl.patterson@gmail.com" };
 
         // Sender's email credentials
         final String username = "mkeshawn10@gmail.com";
@@ -24,32 +39,42 @@ public class SendEmail {
         props.put("mail.smtp.port", "587");
 
         // Get the Session object
-        Session session = Session.getInstance(props, new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
+        Session session = Session.getInstance(props,
+                new Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
 
         try {
             // Create a default MimeMessage object.
-            Message message = new MimeMessage(session);
+            Message message1 = new MimeMessage(session);
+            Message message2 = new MimeMessage(session);
 
             // Set From: header field of the header.
-            message.setFrom(new InternetAddress(from));
+            message1.setFrom(new InternetAddress(from));
+            message2.setFrom(new InternetAddress(from));
 
             // Set To: header field of the header.
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+            for (String t : to) {
+                message1.addRecipients(Message.RecipientType.TO, InternetAddress.parse(t));
+            }
+            message2.setRecipients(Message.RecipientType.TO, InternetAddress.parse(prompts.getEmail()));
 
             // Set Subject: header field
-            message.setSubject("Testing JavaMail");
+            message1.setSubject("Sent Thesis");
+            message2.setSubject("Received Thesis");
 
             // Now set the actual message
-            message.setText("Hello, this is a test email sent from Java.");
+            message1.setText(
+                    "Good day. please see the following thesis from" + prompts.getFName() + prompts.getLName());
+            message2.setText(
+                    "We have received your thesis. A librarian will reach out to you via corrections as soon as they're ready.");
 
             // Send message
-            Transport.send(message);
-
-            System.out.println("Email sent successfully!");
+            Transport.send(message1);
+            Transport.send(message2);
 
         } catch (MessagingException e) {
             throw new RuntimeException(e);

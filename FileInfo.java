@@ -17,6 +17,10 @@ public class FileInfo {
         return path;
     }
 
+    public void setPath(Path path) {
+        this.path = path;
+    }
+
     public String toString() {
         return getID() + " " + getPath();
     }

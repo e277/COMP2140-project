@@ -21,7 +21,9 @@ public class Submit extends JFrame {
     private JButton cmdClose;
     private JButton cmdSubmit;
     private JButton cmdUpload;
+    private JButton cmdUpdate;
     private JButton cmdQuotaInfo;
+    private JButton cmdReportMenu; // report menu button
     private JPanel panelCommand;
     private JPanel panelUpload;
     private JPanel panelDisplay;
@@ -33,7 +35,8 @@ public class Submit extends JFrame {
     private ThesisSubmission submission;
     private StudentPrompt prompts;
     private ArrayList<FileInfo> files;
-    private ArrayList<FileInfo> submittedFiles;
+    private FileInfo info;
+    private Path path;
 
     /**
      * The Application Constructor that will be used to create the home GUI
@@ -42,7 +45,7 @@ public class Submit extends JFrame {
         submit = this;
         submission = thesisSub;
         prompts = thisForm;
-        submittedFiles = loadFileInfo("FileInfo.txt");
+       
         files = loadFileInfo("FileInfo.txt");
         fc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
@@ -103,6 +106,8 @@ public class Submit extends JFrame {
         cmdClose = new JButton("Close Portal");
         cmdSubmit = new JButton("Submit Thesis");
         cmdUpload = new JButton("Upload File");
+        cmdUpdate = new JButton("Update Thesis");
+        cmdReportMenu = new JButton("Report Menu"); // report menu button
         cmdQuotaInfo = new JButton("Quota Information");
 
         cmdSubmit.setEnabled(false);
@@ -114,16 +119,23 @@ public class Submit extends JFrame {
         cmdClose.setForeground(Color.WHITE);
 
         cmdUpload.setBackground(Color.YELLOW);
+        cmdUpdate.setBackground(Color.LIGHT_GRAY);
+        cmdUpdate.setForeground(Color.WHITE);
+        cmdReportMenu.setBackground(Color.GREEN); // report menu button
         cmdQuotaInfo.setBackground(Color.ORANGE);
 
         panelCommand.add(cmdSubmit);
+        panelCommand.add(cmdUpdate);
         panelCommand.add(cmdQuotaInfo);
+        panelCommand.add(cmdReportMenu); // report menu button
         panelCommand.add(cmdClose);
         panelCommand.setAlignmentX(CENTER_ALIGNMENT);
 
         cmdClose.addActionListener(new closeButtonListener());
         cmdSubmit.addActionListener(new submitButtonListener());
         cmdUpload.addActionListener(new submitButtonListener());
+        cmdUpdate.addActionListener(new submitButtonListener());
+        cmdReportMenu.addActionListener(new ReportMenuButtonListener()); // report menu button
         cmdQuotaInfo.addActionListener(new QuotaInfoButtonListener()); // Add listener for Quota Information button
 
         panelUpload.add(txtName);
@@ -249,9 +261,10 @@ public class Submit extends JFrame {
     private int getSubmissionsForID(int id) {
         // Count the number of submissions made for the given ID
         int count = 0;
-        for (FileInfo fileInfo : submittedFiles) {
+        for (FileInfo fileInfo : files) {
             if (fileInfo.getID() == id) {
-                count++;
+                String name = fileInfo.getPath().toString().split("_")[1];
+                count = Integer.parseInt(name.substring(1));
             }
         }
         return count;
@@ -264,6 +277,17 @@ public class Submit extends JFrame {
         }
     }
 
+    /**
+     * The ReportMenuButtonListener class creates an instance of the ReportMenu
+     * class when the report menu button is clicked.
+     */
+    private class ReportMenuButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open the Report Menu
+            new ReportMenu(null, null);
+        }
+    }
     /**
      * The submitButtonListener class creates an instance of either the Submit or
      * Update class based on
@@ -286,32 +310,50 @@ public class Submit extends JFrame {
 
                     try {
                         Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-                        FileInfo info = new FileInfo(prompts.getID(), destination);
+                        
+                        
+                        info = new FileInfo(prompts.getID(), destination);
                         boolean oldFile = fileExists(info, files);
                         if (!oldFile) {
                             files.add(info);
                             AddFileInfo(files);
 
-                           
                         }
-                        
-                        JOptionPane.showMessageDialog(null, "Your Thesis has been submitted", "Submitted",
-                                JOptionPane.DEFAULT_OPTION);
-                        Quota();
-                        txtName.setText("");
-                        txtName.setVisible(false);
-                        cmdSubmit.setEnabled(false);
-                        submit.setVisible(false);
-
                         Version version = new Version(prompts.getID(), destination);
                         // Add the version
                         version.addVersion();
-    
+                        files = loadFileInfo("FileInfo.txt");
+
+                        JOptionPane.showMessageDialog(null, "Your Thesis has been submitted", "Submitted",
+                                JOptionPane.DEFAULT_OPTION);
+                        Quota();
+                        
+                        SendEmail sendEmail = new SendEmail(prompts);
+                        txtName.setText("");
+                        txtName.setVisible(false);
+                        cmdSubmit.setEnabled(false);                 
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error",
                                 JOptionPane.ERROR_MESSAGE);
                     }
                 }
+            } else if (g.getSource() == cmdUpdate) {
+                for (FileInfo fl: files){
+                    if (prompts.getID() == fl.getID()){
+                        path = fl.getPath();
+                    }
+                }
+                Version version = new Version(prompts.getID(), path);
+                version.updateVersion();
+                files = loadFileInfo("FileInfo.txt");
+
+                JOptionPane.showMessageDialog(null, "Your Thesis has been updated", "Updated",
+                        JOptionPane.DEFAULT_OPTION);
+                Quota();
+                txtName.setText("");
+                txtName.setVisible(false);
+                cmdSubmit.setEnabled(false);
+                submit.setVisible(false);
             } else {
                 int n = fc.showOpenDialog(null);
                 if (n == JFileChooser.APPROVE_OPTION) {
@@ -320,7 +362,14 @@ public class Submit extends JFrame {
                     if (ext.equals(".doc") || ext.equals(".docx") || ext.equals(".pdf")) {
                         txtName.setText(fc.getSelectedFile().getName());
                         txtName.setVisible(true);
+                        cmdSubmit.setVisible(true);
                         cmdSubmit.setEnabled(true);
+                        for(FileInfo fi : files){
+                            if(fi.getID() == prompts.getID()){
+                                cmdSubmit.setEnabled(false);
+                            }
+                        }
+
                     } else {
                         JOptionPane.showMessageDialog(null, "Only file types of .doc, .docx, or .pdf are supported",
                                 "Error",

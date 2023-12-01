@@ -10,9 +10,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 public class StudentPrompt extends JFrame {
-    private String fname, lname;
+    private String fname, lname, email;
     private int ID;
-    private JTextField txtID, txtName;
+    private JTextField txtID, txtName, txtEmail;
     private JButton cmdCancel;
     private JButton cmdSubmit;
     private JPanel pnlCommand;
@@ -56,11 +56,9 @@ public class StudentPrompt extends JFrame {
         txtName = new JTextField(36);
         pnlDisplay.add(txtName);
 
-        /*
-         * pnlDisplay.add(new JLabel("Password:"));
-         * txtPassword = new JTextField(10);
-         * pnlDisplay.add(txtPassword);
-         */
+        pnlDisplay.add(new JLabel("Enter your email address:"));
+        txtEmail = new JTextField(30);
+        pnlDisplay.add(txtEmail);
 
         cmdCancel = new JButton("Cancel");
         cmdSubmit = new JButton("Submit");
@@ -118,6 +116,18 @@ public class StudentPrompt extends JFrame {
         return ID;
     }
 
+    public String getFName() {
+        return fname;
+    }
+
+    public String getLName() {
+        return lname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     private ArrayList<Student> loadStudents(String idFile) {
         Scanner scan;
         ArrayList<Student> studentList = new ArrayList<Student>();
@@ -128,7 +138,8 @@ public class StudentPrompt extends JFrame {
                 String fname = line.split(" ")[0];
                 String lname = line.split(" ")[1];
                 int id = Integer.parseInt(line.split(" ")[2]);
-                Student stud = new Student(fname, lname, id);
+                String email = line.split(" ")[3];
+                Student stud = new Student(fname, lname, id, email);
                 studentList.add(stud);
             }
             return studentList;
@@ -172,7 +183,9 @@ public class StudentPrompt extends JFrame {
             if (stud.getFName().equals(student.getFName())) {
                 if (stud.getLName().equals(student.getLName())) {
                     if (stud.getID() == student.getID()) {
-                        return true;
+                        if (stud.getEmail().equals(student.getEmail())) {
+                            return true;
+                        }
                     }
                 }
 
@@ -182,7 +195,8 @@ public class StudentPrompt extends JFrame {
     }
 
     /**
-     * The SubmitButtonListener class creates an instance of a student and send it to be added to the text file
+     * The SubmitButtonListener class creates an instance of a student and send it
+     * to be added to the text file
      * 
      */
     private class SubmitButtonListener implements ActionListener {
@@ -191,12 +205,13 @@ public class StudentPrompt extends JFrame {
                 ID = Integer.parseInt(txtID.getText());
                 fname = txtName.getText().split(" ")[0];
                 lname = txtName.getText().split(" ")[1];
+                email = txtEmail.getText();
             } catch (NumberFormatException numformerror) {
                 System.out.println(numformerror.getMessage());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             } finally {
-                Student student = new Student(fname, lname, ID);
+                Student student = new Student(fname, lname, ID, email);
                 boolean oldStudent = alreadyStudent(student, studentList);
                 if (!oldStudent) {
                     studentList.add(student);

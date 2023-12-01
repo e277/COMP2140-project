@@ -127,7 +127,8 @@ public class SubmissionQuota extends JFrame {
         int count = 0;
         for (FileInfo fileInfo : submittedFiles) {
             if (fileInfo.getID() == id) {
-                count++;
+                String name = fileInfo.getPath().toString().split("_")[1];
+                count = Integer.parseInt(name.substring(1));
             }
         }
         return count;

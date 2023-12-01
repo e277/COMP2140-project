@@ -1,18 +1,20 @@
 public class Student {
-    private String fname, lname;
+    private String fname, lname,email;
     private int ID;
 
     /**
      * Admin Constructor
      * 
-     * @param fname    the user's first name
+     * @param fname    The user's first name
      * @param lname    The user's last name
-     * @param ID       The user's identification number
+     * @param ID   The user's identification number
+     * @param email    The user's email address
      */
-    public Student(String fname, String lname, int ID) {
+    public Student(String fname, String lname, int ID, String email) {
         this.fname = fname;
         this.lname = lname;
         this.ID = ID;
+        this.email = email;
     };
 
     /**
@@ -43,7 +45,11 @@ public class Student {
         return ID;
     }
 
+    public String getEmail(){
+        return email;
+    }
+
     public String toString(){
-        return getFName() + " " + getLName() + " " + getID();
+        return getFName() + " " + getLName() + " " + getID() + " " + getEmail();
     }
 }

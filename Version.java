@@ -1,44 +1,46 @@
 
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystems;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-public class Version{
+public class Version {
     // private String studentName;
     // private String librarian;
-    ArrayList <String>  versions = new ArrayList<>();
+    ArrayList<String> versions = new ArrayList<>();
     private int uploaderId;
     private Path filePath;
-    private  int counter= 0;
-    
-    
-    public Version(int uploaderId, Path file_path){
-        this.uploaderId= uploaderId;
-        this.filePath = file_path;
-        
+    private int counter = 1;
+    private FileInfo info;
+    private ArrayList<FileInfo> files = new ArrayList<FileInfo>();
 
+
+    public Version(int uploaderId, Path file_path) {
+        this.uploaderId = uploaderId;
+        this.filePath = file_path;
+        info = new FileInfo(uploaderId, file_path);
+        files = loadFileInfo("FileInfo.txt");
     }
 
-    private int getUploaderId(){
+    private int getUploaderId() {
         return uploaderId;
     }
 
+    private String getFileName() {
 
-    private String getFileName(){
-       
         String fileNameWithExtension = filePath.getFileName().toString();
 
         int index = fileNameWithExtension.lastIndexOf('.');
         if (index == -1) {
             return fileNameWithExtension;
         }
-        String fileName= fileNameWithExtension.substring(0, index);
+        String fileName = fileNameWithExtension.substring(0, index);
         return fileName;
     }
 
@@ -54,82 +56,114 @@ public class Version{
 
     void addVersion() {
 
-        String versionName = ""; 
+        String versionName = "";
 
         try {
-
             // Check if the original file exists
             if (!Files.exists(filePath)) {
                 System.out.println("Original file not found: " + filePath.toString());
                 return;
             }
 
-            
             versionName = getFileName() + "_v" + counter + "_" + getFileExtension();
-            System.out.println("l: " +versionName);
 
-            File submissionsFolder = new File("Submissions");
-
-            // Print the contents of the "Submissions" folder
-            File[] submissionFiles = submissionsFolder.listFiles();
-            System.out.println("Files in Submissions folder:");
-            for (File file : submissionFiles) {
-                System.out.println(file.getName());
-            }
-
-            
             Path sourcePath = new File("Submissions/" + getFileName() + getFileExtension()).toPath();
             if (!Files.exists(sourcePath)) {
-                System.out.println("Original files not found: " + filePath.toString());
+                System.out.println("Original file not found: " + filePath.toString());
                 return;
             }
-            Path sourcPath = Paths.get("Submissions", versionName);
-            String sourceName = sourcePath.toString();
-            //System.out.println("source:" + "\t" + sourceName + "\n");
-            String sName = sourcPath.toString();
-            //System.out.println("destination:" + "\t" +sName + "\n");
+
             File old = new File("Submissions\\" + getFileName() + getFileExtension());
-             if (!Files.exists(old.toPath())) {
-                System.out.println("Original files not found: " + filePath.toString());
-                return;
-            }
-            System.out.println("old:" + "\t" + old + "\n");
-            File newf = new File("Submissions\\"+ versionName);
-            System.out.println("new:" + "\t" + newf + "\t" + versionName + "\n");
+            File newf = new File("Submissions\\" + versionName);
 
-           boolean h = old.renameTo(newf);
-            //sourcePath = old.toPath();
-            if (h){
-                sourcePath = newf.toPath();
-            System.out.println("sourcename: " + old + "\n" + "newname:" + newf + "\n" + "newpath:" + sourcePath);}
-            
+            boolean rename = old.renameTo(newf);
+            if(rename) {
+                sourcePath = newf.toPath();}
 
-            // Create a new folder for versions if it doesn't exist
-            File VersionsFolder= new File("VersionsFolder");
-            Path versionFilePath= new File(VersionsFolder,versionName).toPath();
-            
+            File Folder = new File("Submissions");
+            Path versionFilePath = new File(Folder, versionName).toPath();
 
-            System.out.println(sourcePath + "\t" + versionFilePath);
-            Files.copy(sourcePath, versionFilePath,StandardCopyOption.REPLACE_EXISTING);
-            
+        
+
+            for(FileInfo file: files) {
+                if (getUploaderId() == file.getID()){
+                    file.setPath(versionFilePath);
+                    break;
+                }}
+
+            AddFileInfo(files);
+            Files.copy(sourcePath, versionFilePath, StandardCopyOption.REPLACE_EXISTING);
 
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             if (e instanceof NoSuchFileException) {
                 System.out.println("File not found: " + filePath.toString());
-        } else {
-            e.printStackTrace();
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
-    //Add the version to the list
-    versions.add(versionName);
-    System.out.println(versionName);
-    counter++;
+    void updateVersion() {
+        try {
+            String name = getFileName().split("_")[1];
+            int num = Integer.parseInt(name.substring(1));
+            num++;
+            String newname = getFileName().split("_")[0] + "_v" + num + "_" + getFileExtension();
+            File Folder = new File("Submissions");
+            File oldFile = filePath.toFile();
+            File newFile = new File(Folder, newname);
+            oldFile.renameTo(newFile);
+            Path sPath = newFile.toPath();
+            Path dPath = newFile.toPath();
+            Files.copy(sPath, dPath, StandardCopyOption.REPLACE_EXISTING);
+
+
+             for(FileInfo file: files) {
+                if (getUploaderId() == file.getID()){
+                    file.setPath(dPath);
+                    break;
+                }}
+
+            AddFileInfo(files);
+        } catch (Exception e) {
+            if (e instanceof NoSuchFileException) {
+                System.out.println("File not found: " + filePath.toString());
+            } else {
+                e.printStackTrace();
+            }
+
+        }
     }
 
+    public void AddFileInfo(ArrayList<FileInfo> fileList) {
+        try {
+            PrintStream out = new PrintStream(new FileOutputStream("FileInfo.txt"));
+            for (FileInfo r : fileList) {
+                out.println(r);
 
+            }
+            out.close();
+        } catch (FileNotFoundException fe) {
+            System.out.print(fe.getMessage());
+        }
+    }
 
-    
-
+    private ArrayList<FileInfo> loadFileInfo(String idFile) {
+        Scanner scan;
+        try {
+            scan = new Scanner(new File(idFile));
+            while (scan.hasNext()) {
+                String line = scan.nextLine();
+                int id = Integer.parseInt(line.split(" ")[0]);
+                Path path = new File(line.split(" ")[1]).toPath();
+                FileInfo fInfo = new FileInfo(id, path);
+                files.add(fInfo);
+            }
+            return files;
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        return files;
+    }
 }
