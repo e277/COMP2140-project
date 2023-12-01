@@ -173,7 +173,7 @@ public class ThesisSubmission extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Open the Report Menu
-            new ReportMenu();
+            new ReportMenu(null, null);
         }
     }
 
