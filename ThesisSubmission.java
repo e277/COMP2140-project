@@ -174,6 +174,8 @@ public class ThesisSubmission extends JPanel {
         public void actionPerformed(ActionEvent e) {
             // Open the Report Menu
             new ReportMenu(null, null);
+            // Open the Submission Quota Menu
+            new SubmissionQuota();
         }
     }
 
