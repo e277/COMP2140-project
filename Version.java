@@ -65,6 +65,8 @@ public class Version{
                 return;
             }
 
+            //boolean guess = Files.exists(filePath)? true : false;
+            //System.out.println("path: " + filePath + " guess: " + guess);
 
             // Generate the version name
             LocalDateTime timeUploaded = LocalDateTime.now();
@@ -125,7 +127,7 @@ public class Version{
 
     public static void main(String[] args) {
         
-        Path path = Paths.get("Submissions\\tamarica resume job placement.docx");
+        Path path = Paths.get("Submissions\\ar.c");
         System.out.println(path);
         Version document = new Version(123456789, path);
 
