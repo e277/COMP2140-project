@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +8,6 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class Version{
     // private String studentName;
@@ -65,18 +64,11 @@ public class Version{
                 return;
             }
 
-            //boolean guess = Files.exists(filePath)? true : false;
-            //System.out.println("path: " + filePath + " guess: " + guess);
-
-            // Generate the version name
-            LocalDateTime timeUploaded = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd-HH-mm-ss");
             
             versionName = getFileName() + "_v" + counter + "_" + getFileExtension();
             System.out.println("l: " +versionName);
 
             File submissionsFolder = new File("Submissions");
-            //System.out.println("Submissions folder exists: " + submissionsFolder.exists());
 
             // Print the contents of the "Submissions" folder
             File[] submissionFiles = submissionsFolder.listFiles();
@@ -117,11 +109,6 @@ public class Version{
             Path versionFilePath= new File(VersionsFolder,versionName).toPath();
             
 
-            System.out.println("SourceFile: " + versionName);
-            System.out.println("FileExtension: " + getFileExtension());
-            System.out.println("SourcePath: " + sourcePath);
-            System.out.println("VersionFilePath: " + versionFilePath);
-
             System.out.println(sourcePath + "\t" + versionFilePath);
             Files.copy(sourcePath, versionFilePath,StandardCopyOption.REPLACE_EXISTING);
             
@@ -143,24 +130,28 @@ public class Version{
 
 
 
-    public void getVersion(){
-        for (String docVersion:versions){
-            System.out.println(docVersion);
-        }
-    }
+    // public void getVersion(int uploaderId){
+    //     System.out.println("Versions for Uploader ID: " + uploaderId);
+    //     for (String docVersion : versions) {
+    //         // Check if the version belongs to the specified uploader
+    //         if (docVersion.contains("_v" + uploaderId + "_")) {
+    //             System.out.println(docVersion);
+    //         }
+    //     }
+    // }
 
 
 
 
-    public static void main(String[] args) {
+    // public static void main(String[] args) {
         
-        Path path = Paths.get("Submissions\\ar.c");
-        //System.out.println(path);
-        Version document = new Version(123456789, path);
+    //     Path path = Paths.get("Submissions\\ascii2magnitude.c");
+    //     //System.out.println(path);
+    //     Version document = new Version(111222333, path);
 
-        document.addVersion();
-        document.getVersion();
+    //     document.addVersion();
+    //     //document.getVersion(111222333);
 
-    }
+    // }
 
 }
